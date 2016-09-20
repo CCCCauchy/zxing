@@ -1,9 +1,22 @@
 package com.henry.ceo.zxing;
 
+import android.app.Dialog;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
@@ -20,6 +33,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -89,5 +103,51 @@ public class Utils {
             multiFormatReader.reset();
         }
         return retStr;
+    }
+
+    public static void shareImage(Bitmap bitmap, Context mContext) {
+        try {
+            Uri uriToImage = Uri.parse(MediaStore.Images.Media.insertImage(
+                    mContext.getContentResolver(), bitmap, null, null));
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
+            shareIntent.setType("image/*");
+            // 遍历所有支持发送图片的应用。找到需要的应用
+            PackageManager packageManager = mContext.getPackageManager();
+            List<ResolveInfo> resolveInfoList = packageManager
+                    .queryIntentActivities(shareIntent,
+                             PackageManager.MATCH_DEFAULT_ONLY);
+            ComponentName componentName = null;
+            int i = 0;
+            Dialog dialog = new Dialog(mContext);
+            RelativeLayout relativeLayout = new RelativeLayout(mContext);
+            Log.i("sysout","size="+resolveInfoList.size());
+            for (; i < resolveInfoList.size(); i++) {
+                ImageView imageView = new ImageView(mContext);
+                imageView.setImageDrawable (resolveInfoList.get(i).loadIcon(packageManager));
+                relativeLayout.addView(imageView);
+
+                if (TextUtils.equals(
+                        resolveInfoList.get(i).activityInfo.packageName,
+                        "com.tencent.mm")) {
+                    componentName = new ComponentName(
+                            resolveInfoList.get(i).activityInfo.packageName,
+                            resolveInfoList.get(i).activityInfo.name);
+                    break;
+                }
+            }
+            dialog.setContentView(relativeLayout);
+            dialog.show();
+            // 已安装**
+            if (null != componentName) {
+                shareIntent.setComponent(componentName);
+                mContext.startActivity(shareIntent);
+            } else {
+                Toast.makeText(mContext,"请先安装"+resolveInfoList.get(i).activityInfo.name, Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(mContext,"分享图片到失败", Toast.LENGTH_SHORT).show();
+        }
     }
 }

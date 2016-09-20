@@ -1,13 +1,16 @@
 package com.henry.ceo.zxing;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.input.InputManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -28,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if(this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
+        }
         imageView = (ImageView) findViewById(R.id.imageView);
         editText = (EditText) findViewById(R.id.textView);
         textView = (TextView) findViewById(R.id.textView2);
@@ -56,8 +62,18 @@ public class MainActivity extends AppCompatActivity {
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent("com.henry.ceo.zxing.camera");
+                Intent intent = new Intent("com.henry.ceo.zxing.webview");
                 startActivity(intent);
+            }
+        });
+
+        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.i("sysout","Long click");
+                Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+                Utils.shareImage( bitmap,MainActivity.this);
+                return false;
             }
         });
     }
