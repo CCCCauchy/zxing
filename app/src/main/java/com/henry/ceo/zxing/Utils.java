@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -32,6 +33,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -107,11 +109,13 @@ public class Utils {
 
     public static void shareImage(Bitmap bitmap, Context mContext) {
         try {
+            List<Intent> targetedShareIntents = new ArrayList<Intent>();
             Uri uriToImage = Uri.parse(MediaStore.Images.Media.insertImage(
                     mContext.getContentResolver(), bitmap, null, null));
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
             shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
+            shareIntent.putExtra(Intent.EXTRA_TEXT,"哈哈哈");
             shareIntent.setType("image/*");
             // 遍历所有支持发送图片的应用。找到需要的应用
             PackageManager packageManager = mContext.getPackageManager();
@@ -120,32 +124,51 @@ public class Utils {
                              PackageManager.MATCH_DEFAULT_ONLY);
             ComponentName componentName = null;
             int i = 0;
-            Dialog dialog = new Dialog(mContext);
-            RelativeLayout relativeLayout = new RelativeLayout(mContext);
+//            Dialog dialog = new Dialog(mContext);
+//            RelativeLayout relativeLayout = new RelativeLayout(mContext);
             Log.i("sysout","size="+resolveInfoList.size());
             for (; i < resolveInfoList.size(); i++) {
-                ImageView imageView = new ImageView(mContext);
-                imageView.setImageDrawable (resolveInfoList.get(i).loadIcon(packageManager));
-                relativeLayout.addView(imageView);
-
-                if (TextUtils.equals(
-                        resolveInfoList.get(i).activityInfo.packageName,
-                        "com.tencent.mm")) {
-                    componentName = new ComponentName(
+                Intent targeted = new Intent();
+                targeted.setAction(Intent.ACTION_SEND);
+                targeted.putExtra(Intent.EXTRA_STREAM, uriToImage);
+                targeted.putExtra(Intent.EXTRA_TEXT,"哈哈哈");
+                targeted.setType("image/*");
+                Log.i("sysout",i+":"+resolveInfoList.get(i).activityInfo.name);
+//                ImageView imageView = new ImageView(mContext);
+//                imageView.setImageDrawable (resolveInfoList.get(i).loadIcon(packageManager));
+//                relativeLayout.addView(imageView);
+//                if (TextUtils.equals(
+//                        resolveInfoList.get(i).activityInfo.packageName,
+//                        "com.tencent.mm")) {
+//                    componentName = new ComponentName(
+//                            resolveInfoList.get(i).activityInfo.packageName,
+//                            resolveInfoList.get(i).activityInfo.name);
+//                    break;
+//                }
+                componentName = new ComponentName(
                             resolveInfoList.get(i).activityInfo.packageName,
                             resolveInfoList.get(i).activityInfo.name);
-                    break;
-                }
+                targeted.setComponent(componentName);
+                targetedShareIntents.add(targeted);
+
             }
-            dialog.setContentView(relativeLayout);
-            dialog.show();
+            Intent chooserIntent = Intent.createChooser(targetedShareIntents.remove(2), "Select app to share");
+            if (chooserIntent == null) {
+                return;
+            }
+            // A Parcelable[] of Intent or LabeledIntent objects as set with
+            // putExtra(String, Parcelable[]) of additional activities to place
+            // a the front of the list of choices, when shown to the user with a
+            // ACTION_CHOOSER.
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetedShareIntents.toArray(new Parcelable[] {}));
+            mContext.startActivity(chooserIntent);
             // 已安装**
-            if (null != componentName) {
-                shareIntent.setComponent(componentName);
-                mContext.startActivity(shareIntent);
-            } else {
-                Toast.makeText(mContext,"请先安装"+resolveInfoList.get(i).activityInfo.name, Toast.LENGTH_SHORT).show();
-            }
+//            if (null != componentName) {
+//                shareIntent.setComponent(componentName);
+//                mContext.startActivity(shareIntent);
+//            } else {
+//                Toast.makeText(mContext,"请先安装"+resolveInfoList.get(i).activityInfo.name, Toast.LENGTH_SHORT).show();
+//            }
         } catch (Exception e) {
             Toast.makeText(mContext,"分享图片到失败", Toast.LENGTH_SHORT).show();
         }

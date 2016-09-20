@@ -31,9 +31,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if(this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
-        }
+//        if(this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+//            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
+//        }
         imageView = (ImageView) findViewById(R.id.imageView);
         editText = (EditText) findViewById(R.id.textView);
         textView = (TextView) findViewById(R.id.textView2);
