@@ -1,4 +1,4 @@
-package com.henry.ceo.zxing;
+package com.henry.ceo.util;
 
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -115,8 +115,10 @@ public class Utils {
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
             shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
-            shareIntent.putExtra(Intent.EXTRA_TEXT,"哈哈哈");
+//            shareIntent.putExtra(Intent.EXTRA_TEXT,"哈哈哈");
             shareIntent.setType("image/*");
+            mContext.startActivity(Intent.createChooser(shareIntent,"Select app to share"));
+            if (true) return;
             // 遍历所有支持发送图片的应用。找到需要的应用
             PackageManager packageManager = mContext.getPackageManager();
             List<ResolveInfo> resolveInfoList = packageManager

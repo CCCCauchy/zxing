@@ -1,13 +1,10 @@
-package com.henry.ceo.zxing;
+package com.henry.ceo.activity;
 
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.hardware.input.InputManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.henry.ceo.zxing.R;
+import com.henry.ceo.util.Utils;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent("com.henry.ceo.zxing.webview");
+                Intent intent = new Intent("com.henry.ceo.zxing.camera");
                 startActivity(intent);
             }
         });
