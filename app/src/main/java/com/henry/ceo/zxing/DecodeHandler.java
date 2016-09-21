@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
@@ -41,6 +42,7 @@ public class DecodeHandler extends Handler {
         }
         switch (message.what) {
             case R.id.decode:
+                Log.i("sysout","decode.."+message.obj);
                 decode((byte[]) message.obj, message.arg1, message.arg2);
                 break;
             case R.id.quit:

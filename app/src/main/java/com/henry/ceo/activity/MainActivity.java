@@ -1,10 +1,13 @@
 package com.henry.ceo.activity;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        if(this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
-//            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
-//        }
+        if (Build.VERSION.SDK_INT >= 23 && this.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 2);
+        }
         imageView = (ImageView) findViewById(R.id.imageView);
         editText = (EditText) findViewById(R.id.textView);
         textView = (TextView) findViewById(R.id.textView2);

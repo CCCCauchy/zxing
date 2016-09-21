@@ -89,7 +89,6 @@ public class Utils {
     }
 
     public static String decodeQr(Bitmap image){
-        String retStr = null;
         final int width = image.getWidth(), height = image.getHeight();
         final int[] pixels = new int[width * height];
         image.getPixels(pixels, 0, width, 0, 0, width, height);
@@ -98,13 +97,12 @@ public class Utils {
         MultiFormatReader multiFormatReader = new MultiFormatReader();
         try {
             Result rawResult = multiFormatReader.decodeWithState(bitmap);
-            retStr = rawResult.getText();
+            return rawResult.getText();
         } catch (NotFoundException re) {
             return null;
         }finally {
             multiFormatReader.reset();
         }
-        return retStr;
     }
 
     public static void shareImage(Bitmap bitmap, Context mContext) {
