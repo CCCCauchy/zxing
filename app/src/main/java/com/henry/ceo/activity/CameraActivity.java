@@ -285,7 +285,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         int height = cropHeight * cameraHeight / containerHeight;
 
         /** 生成最终的截取的矩形 */
-        mCropRect = new Rect(x, y, width + x, height + y);
+        mCropRect = new Rect(x/2, y/2, width + 2*x, height + 2*y);//增大相机取图大小，可以优化扫码速度
     }
 
     private int getStatusBarHeight() {
